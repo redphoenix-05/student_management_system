@@ -188,6 +188,20 @@ WebApp/
 
 The application uses Spring Boot DevTools for hot reload during development. Any changes to the code will automatically restart the application.
 
+## Contributing
+
+All changes to the `main` branch must be made through pull requests. The repository has branch protection rules enabled:
+- Direct pushes to main are blocked
+- Force pushes are not allowed
+- Branch deletion is restricted
+- Pull request reviews are required before merging
+
+To contribute:
+1. Create a feature branch from `main`
+2. Make your changes and commit them
+3. Push the feature branch to the repository
+4. Open a pull request for review
+
 ## License
 
 This project is for educational purposes.
