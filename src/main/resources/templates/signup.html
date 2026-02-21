@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sign Up - Student Management System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .signup-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        .signup-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .signup-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .signup-body {
+            padding: 40px 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .role-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .role-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .role-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        .conditional-fields {
+            display: none;
+        }
+        .conditional-fields.active {
+            display: block;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .alert-error {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        function selectRole(role) {
+            document.getElementById('roleInput').value = role;
+            
+            // Update tab styling
+            document.querySelectorAll('.role-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Show/hide conditional fields
+            document.querySelectorAll('.conditional-fields').forEach(field => {
+                field.classList.remove('active');
+            });
+            
+            if (role === 'STUDENT') {
+                document.getElementById('studentFields').classList.add('active');
+            } else if (role === 'TEACHER') {
+                document.getElementById('teacherFields').classList.add('active');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-header">
+            <h1>Create Account</h1>
+            <p>Join our Student Management System</p>
+        </div>
+        <div class="signup-body">
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}">Error message</span>
+            </div>
+
+            <div class="role-tabs">
+                <div class="role-tab active" onclick="selectRole('STUDENT')">
+                    <strong>Student</strong>
+                </div>
+                <div class="role-tab" onclick="selectRole('TEACHER')">
+                    <strong>Teacher</strong>
+                </div>
+            </div>
+
+            <form th:action="@{/register}" method="post">
+                <input type="hidden" id="roleInput" name="role" value="STUDENT">
+                
+                <div class="form-group">
+                    <label for="username">Username *</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" name="password" required minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+                </div>
+
+                <!-- Student-specific fields -->
+                <div id="studentFields" class="conditional-fields active">
+                    <div class="form-group">
+                        <label for="studentName">Full Name *</label>
+                        <input type="text" id="studentName" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="roll">Roll Number *</label>
+                        <input type="text" id="roll" name="roll">
+                    </div>
+                </div>
+
+                <!-- Teacher-specific fields -->
+                <div id="teacherFields" class="conditional-fields">
+                    <div class="form-group">
+                        <label for="teacherName">Full Name *</label>
+                        <input type="text" id="teacherName" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">Create Account</button>
+            </form>
+
+            <div class="links">
+                Already have an account? <a th:href="@{/login}">Sign In</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>My Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .navbar h2 {
+            margin: 0;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+            transition: background 0.3s;
+        }
+        .navbar a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+        .role-badge {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .profile-section {
+            margin-bottom: 30px;
+        }
+        .profile-section h2 {
+            color: #667eea;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .info-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+        }
+        .btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .course-list {
+            list-style: none;
+            padding: 0;
+        }
+        .course-item {
+            padding: 10px;
+            background: #f8f9fa;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>Student Management System</h2>
+        <div>
+            <a th:href="@{/home}">← Back to Home</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div th:if="${success}" class="alert alert-success">
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-error">
+            <span th:text="${error}"></span>
+        </div>
+
+        <div class="profile-header">
+            <div>
+                <h1>My Profile</h1>
+                <p style="color: #666;">View and manage your personal information</p>
+            </div>
+            <span class="role-badge" th:text="${userType}">ROLE</span>
+        </div>
+
+        <!-- Student Profile -->
+        <div th:if="${userType == 'STUDENT'}">
+            <div class="profile-section">
+                <h2>Personal Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value" th:text="${student.name}">Student Name</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Roll Number</div>
+                        <div class="info-value" th:text="${student.roll}">Roll</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value" th:text="${student.email}">Email</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Username</div>
+                        <div class="info-value" th:text="${user.username}">Username</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h2>Academic Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Department</div>
+                        <div class="info-value" th:text="${student.dept != null ? student.dept.name : 'Not Assigned'}">Department</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Current Semester</div>
+                        <div class="info-value" th:text="${student.currentSemester != null ? student.currentSemester : 'Not Set'}">Semester</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Academic Year</div>
+                        <div class="info-value" th:text="${student.academicYear != null ? student.academicYear : 'Not Set'}">Year</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Enrolled Courses</div>
+                        <div class="info-value" th:text="${student.enrolledCourses.size()}">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section" th:if="${student.enrolledCourses.size() > 0}">
+                <h2>My Courses</h2>
+                <ul class="course-list">
+                    <li class="course-item" th:each="course : ${student.enrolledCourses}">
+                        <strong th:text="${course.code}">Course Code</strong> - 
+                        <span th:text="${course.name}">Course Name</span>
+                        (<span th:text="${course.credits}">3</span> credits)
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Teacher Profile -->
+        <div th:if="${userType == 'TEACHER'}">
+            <div class="profile-section">
+                <h2>Personal Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value" th:text="${teacher.name}">Teacher Name</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value" th:text="${teacher.email}">Email</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Phone</div>
+                        <div class="info-value" th:text="${teacher.phone != null ? teacher.phone : 'Not Provided'}">Phone</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Username</div>
+                        <div class="info-value" th:text="${user.username}">Username</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h2>Professional Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Department</div>
+                        <div class="info-value" th:text="${teacher.dept != null ? teacher.dept.name : 'Not Assigned'}">Department</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Courses Created</div>
+                        <div class="info-value" th:text="${teacher.createdCourses.size()}">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section" th:if="${teacher.createdCourses.size() > 0}">
+                <h2>Courses I Created</h2>
+                <ul class="course-list">
+                    <li class="course-item" th:each="course : ${teacher.createdCourses}">
+                        <strong th:text="${course.code}">Course Code</strong> - 
+                        <span th:text="${course.name}">Course Name</span>
+                        (<span th:text="${course.credits}">3</span> credits)
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <a th:href="@{/profile/edit}" class="btn">Edit Profile</a>
+            <a th:href="@{/home}" class="btn" style="background: #6c757d;">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

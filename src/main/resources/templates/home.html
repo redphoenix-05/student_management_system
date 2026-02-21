@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Student Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .navbar h2 {
+            margin: 0;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .user-info span {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        .logout-btn {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover {
+            background: white;
+            color: #667eea;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .menu {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .menu li {
+            margin: 0;
+        }
+        .menu a {
+            display: block;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: 600;
+        }
+        .menu a:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #28a745;
+            color: white;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>Student Management System</h2>
+        <div class="user-info">
+            <span sec:authentication="name">Username</span>
+            <span class="role-badge" sec:authentication="principal.authorities">Role</span>
+            <form th:action="@{/logout}" method="post" style="margin: 0;">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h1>Welcome to Student Management System</h1>
+        <ul class="menu">
+            <!-- All authenticated users can view their profile -->
+            <li sec:authorize="hasAnyRole('STUDENT', 'TEACHER', 'ADMIN')">
+                <a th:href="@{/profile}">👤 My Profile</a>
+            </li>
+            
+            <!-- Students can view and enroll in courses -->
+            <li sec:authorize="hasRole('STUDENT')">
+                <a th:href="@{/courses/my-courses}">📚 My Courses</a>
+            </li>
+            <li sec:authorize="hasRole('STUDENT')">
+                <a th:href="@{/courses/available}">🔍 Browse Courses</a>
+            </li>
+            
+            <!-- Only admin can manage students and teachers -->
+            <li sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/students}">📚 Manage Students</a>
+            </li>
+            <li sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/teachers}">👨‍🏫 Manage Teachers</a>
+            </li>
+            
+            <!-- Teachers and admin can manage departments and courses -->
+            <li sec:authorize="hasAnyRole('TEACHER', 'ADMIN')">
+                <a th:href="@{/departments}">🏢 Manage Departments</a>
+            </li>
+            <li sec:authorize="hasAnyRole('TEACHER', 'ADMIN')">
+                <a th:href="@{/courses}">📖 Manage Courses</a>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>
